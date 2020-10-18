@@ -11,17 +11,31 @@ class Snake:
         self.lastDirection = 0
 
     def addDirection(self, newDirection):
+        if self.directionHistory[0] == "w" and newDirection == "s":
+            self.directionHistory.insert(0,"w")
+            return
+        if self.directionHistory[0] == "s" and newDirection == "w":
+            self.directionHistory.insert(0,"s")
+            return
+        if self.directionHistory[0] == "a" and newDirection == "d":
+            self.directionHistory.insert(0,"a")
+            return
+        if self.directionHistory[0] == "d" and newDirection == "a":
+            self.directionHistory.insert(0,"d")
+            return
+        #defaoult:
         self.directionHistory.insert(0,newDirection)
 
     def moveSnakeBody(self, newDirection):
         self.addDirection(newDirection)
-        print(self.directionHistory)
-        print(newDirection)
+        #print(self.directionHistory)
+        #print(newDirection)
         while True:
             if len(self.directionHistory) > len(self.body):
                 self.directionHistory.pop()
             else:
                 break
+        wrongWay = False
         for i in range(0, len(self.body)):
             if self.directionHistory[i] == "w":
                 self.body[i].move_ip(self.moveUp())
@@ -32,6 +46,13 @@ class Snake:
             if self.directionHistory[i] == "d":
                 self.body[i].move_ip(self.moveRight())
             self.teleport(self.body[i])
+        #self.checkBodyCollide()
+
+    def checkBodyCollide(self):
+        pass
+        #if self.body[0] ==
+
+
 
     def teleport(self, currentRect):
         if currentRect.centerx >= self.windowSizex:
@@ -56,7 +77,7 @@ class Snake:
         for element in self.body:
             screen.blit(image, element)
 
-    def checkCollide(self, food):
+    def checkCollideFood(self, food):
         #print(food, self.body[0])
         if food == self.body[0]:
             self.addSegment()
@@ -119,7 +140,7 @@ while True:
                 buttonPressed = "d"
 
     snake.moveSnakeBody(buttonPressed)
-    snake.checkCollide(food)
+    snake.checkCollideFood(food)
 
 
     screen.fill(BLACK)

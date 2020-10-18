@@ -9,7 +9,6 @@ class Snake:
         self.windowSizex = windowSizex
         self.windowSizey = windowSizey
         self.lastDirection = 0
-        #self.directionHistory = [direction]
 
     def addDirection(self, newDirection):
         self.directionHistory.insert(0,newDirection)
@@ -23,7 +22,6 @@ class Snake:
                 self.directionHistory.pop()
             else:
                 break
-
         for i in range(0, len(self.body)):
             if self.directionHistory[i] == "w":
                 self.body[i].move_ip(self.moveUp())
@@ -33,10 +31,17 @@ class Snake:
                 self.body[i].move_ip(self.moveLeft())
             if self.directionHistory[i] == "d":
                 self.body[i].move_ip(self.moveRight())
-        print(self.body)
+            self.teleport(self.body[i])
 
-        #self.directionHistory.pop()
-            #teleport(self.body[i])
+    def teleport(self, currentRect):
+        if currentRect.centerx >= self.windowSizex:
+            currentRect.move_ip(-self.windowSizex, 0)
+        if currentRect.centerx <= 0:
+            currentRect.move_ip(self.windowSizex, 0)
+        if currentRect.centery >= self.windowSizey:
+            currentRect.move_ip(0, -self.windowSizey)
+        if currentRect.centery <= 0:
+            currentRect.move_ip(0, self.windowSizey)
 
     def moveUp(self):
         return 0, -self.rectSize
@@ -52,15 +57,13 @@ class Snake:
             screen.blit(image, element)
 
     def checkCollide(self, food):
-        print(food, self.body[0])
+        #print(food, self.body[0])
         if food == self.body[0]:
-        #if food.centerx == self.body[0].centerx and food.centery == self.body[0].centery:
             self.addSegment()
-        #if self.body[0].colliderect(food):
 
     def addSegment(self):
-        print("addSegment")
-        print("direction.History: ", self.directionHistory)
+        #print("addSegment")
+        #print("direction.History: ", self.directionHistory)
         self.body.append(self.body[-1].copy())
         if self.directionHistory[-1] == "w":
             self.body[-1].move_ip(self.moveDown())
@@ -71,19 +74,6 @@ class Snake:
         if self.directionHistory[-1] == "d":
             self.body[-1].move_ip(self.moveLeft())
 
-        #print("Ile segmentów:",len(self.body))
-        for elem in self.body:
-            print(elem)
-
-    def teleport(self, currentRect):
-        if currentRect.centerx >= self.windowSizex:
-            currentRect.move_ip(-self.windowSizex, 0)
-        if currentRect.centerx <= 0:
-            currentRect.move_ip(self.windowSizex, 0)
-        if currentRect.centery >= self.windowSizey:
-            currentRect.move_ip(0, -self.windowSizey)
-        if currentRect.centery <= 0:
-            currentRect.move_ip(0, self.windowSizey)
 
 successes, failures = pygame.init()
 print("{0} successes and {1} failures".format(successes, failures))
@@ -93,7 +83,7 @@ windowSizex = rectSize*20
 windowSizey = rectSize*10
 screen = pygame.display.set_mode((windowSizex, windowSizey))
 clock = pygame.time.Clock()
-FPS = 2  # Frames per second.
+FPS = 10  # Frames per second.
 
 
 BLACK = (0, 0, 0)
@@ -119,22 +109,18 @@ while True:
         if event.type == pygame.QUIT:
             quit()
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
+            if event.key == pygame.K_w or event.key == pygame.K_UP:
                 buttonPressed = "w"
-            elif event.key == pygame.K_s:
+            elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
                 buttonPressed = "s"
-            elif event.key == pygame.K_a:
+            elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
                 buttonPressed = "a"
-            elif event.key == pygame.K_d:
+            elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 buttonPressed = "d"
-            #elif event.key == pygame.K_p:
-                #snake.addSegment()
 
     snake.moveSnakeBody(buttonPressed)
     snake.checkCollide(food)
 
-    #snake.drawSnake()
-    #teleport(rect)
 
     screen.fill(BLACK)
     snake.drawSnake(screen, image)

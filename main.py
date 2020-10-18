@@ -52,10 +52,11 @@ class Snake:
             screen.blit(image, element)
 
     def checkCollide(self, food):
-        if food.centerx == self.body[0].centerx and food.centery == self.body[0].centery:
+        print(food, self.body[0])
+        if food == self.body[0]:
+        #if food.centerx == self.body[0].centerx and food.centery == self.body[0].centery:
             self.addSegment()
         #if self.body[0].colliderect(food):
-
 
     def addSegment(self):
         print("addSegment")
@@ -101,7 +102,7 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 
 rect = pygame.Rect((0, 0), (rectSize, rectSize))
-food = pygame.Rect((rectSize*3, rectSize*4), (rectSize * 3, rectSize * 4))
+food = pygame.Rect((rectSize*3, rectSize*4), (rectSize, rectSize ))
 image = pygame.Surface((rectSize, rectSize))
 image .fill(WHITE)
 image2 = pygame.Surface((rectSize, rectSize))
@@ -110,7 +111,7 @@ pygame.display.set_caption('Snake PG')
 getTicksLastFrame = 0
 buttonPressed = "d"
 snake = Snake(dir, rect, rectSize, windowSizex, windowSizey)
-
+print("food coordinates: ", food.centerx, food.centery)
 while True:
     clock.tick(FPS)
 

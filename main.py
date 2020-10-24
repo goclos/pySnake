@@ -94,8 +94,6 @@ class Snake:
             return True
 
     def addSegment(self):
-        #print("addSegment")
-        #print("direction.History: ", self.directionHistory)
         self.body.append(self.body[-1].copy())
         if self.directionHistory[-1] == "w":
             self.body[-1].move_ip(self.moveDown())
@@ -112,7 +110,7 @@ def text_objects(text, font, color):
 
 def paused(display_width, display_height, gameDisplay):
     largeText = pygame.font.SysFont("consolas",128)
-    TextSurf, TextRect = text_objects("Paused", largeText, (0,255,0))
+    TextSurf, TextRect = text_objects("Paused", largeText, (51,255,0))
     TextRect.center = ((display_width/2),(display_height/2))
     gameDisplay.blit(TextSurf, TextRect)
     while pause:
@@ -123,13 +121,6 @@ def paused(display_width, display_height, gameDisplay):
                 if event.key == pygame.K_ESCAPE:
                     print("escape")
                     return
-                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                    buttonPressed = "s"
-                #pygame.quit()
-                #quit()
-        #gameDisplay.fill(white)
-        #button("Continue",150,450,100,50,(0,255,0),(155,255,229),unpause)
-        #button("Quit",550,450,100,50,red,bright_red,quitgame)
         pygame.display.update()
         clock.tick(15)
 
@@ -137,7 +128,7 @@ def died(display_width, display_height, gameDisplay, score):
     largeText = pygame.font.SysFont("consolas",80)
     smalltext = pygame.font.SysFont("consolas",30)
 
-    diedTextSurf, diedTextRect = text_objects("You died...", largeText, (255,36,0))
+    diedTextSurf, diedTextRect = text_objects("You died", largeText, (255,36,0))
     diedTextRect.center = ((display_width/2),(display_height/2)-70)
 
     scoreTextSurf, scoreTextRect = text_objects("Your SCORE: "+ str(score), smalltext, (51,255,0))
@@ -171,14 +162,16 @@ def moveFood(food, snake, display_width, display_height ,rectSize):
     gridCounty = display_height / rectSize
     print(gridCountx, gridCounty)
     while True: #
+        print("przed kolejnym przesunięciem: ", food)
         randomShiftx = 0
         randomShifty = 0
-        randomShiftx = random.randint(0, gridCountx)
-        randomShifty = random.randint(0, gridCounty)
-        print(randomShiftx, gridCountx, display_width)
-        print(randomShifty, gridCounty, display_height)
-        food.move_ip(randomShiftx * rectSize, randomShifty * rectSize)
-        print(food)
+        randomShiftx = random.randint(1, gridCountx)
+        randomShifty = random.randint(1, gridCounty)
+        print(randomShiftx, randomShifty)
+        #food.move_ip(randomShiftx * rectSize, randomShifty * rectSize)
+        food.x = (randomShiftx * rectSize) - rectSize
+        food.y = (randomShifty * rectSize) - rectSize
+        print("po kolejnym przesunięciu",food)
         if snake.overlapedWithSnake(food):
             continue
         else:
@@ -192,7 +185,7 @@ windowSizex = rectSize*20
 windowSizey = rectSize*10
 screen = pygame.display.set_mode((windowSizex, windowSizey))
 clock = pygame.time.Clock()
-FPS = 10  # Frames per second at start.
+FPS = 3  # Frames per second at start.
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -240,10 +233,13 @@ while True:
         if respawn:
             snake = Snake("d", rect, rectSize, windowSizex, windowSizey)
             score = 0
+            FPS = 3
     if snake.checkCollideFood(food):
         score += 1
         pygame.display.set_caption(mainWindowTitle + " | SCORE: "+ str(score))
         moveFood(food, snake, windowSizex, windowSizey ,rectSize)
+        if score % 6 == 0:
+            FPS += 1
 
     screen.fill(BLACK)
     snake.drawSnake(screen, image)

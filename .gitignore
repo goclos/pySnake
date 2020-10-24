@@ -1,0 +1,11 @@
+*.exe
+*.jpg
+*.png
+/Include/*
+/Lib/*
+/Scripts/*
+/Snake/*
+/output/
+/_pycache__/
+TODO.txt
+pyvenv.cfg

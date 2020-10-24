@@ -1,5 +1,5 @@
 import pygame
-import random
+from random import randint
 
 class Snake:
     def __init__(self, dir, headRect, rectSize, windowSizex, windowSizey):
@@ -17,7 +17,6 @@ class Snake:
             if object == segment:
                 return True
         return False
-
 
     def addDirection(self, newDirection):
         if self.directionHistory[0] == "w" and newDirection == "s":
@@ -61,7 +60,7 @@ class Snake:
         for i in range(1, len(self.body)):
             if self.body[0] == self.body[i]:
                 self.snakeKilled = True
-                print("collide with body")
+                #print("collide with body")
 
     def teleport(self, currentRect):
         if currentRect.centerx >= self.windowSizex:
@@ -119,7 +118,7 @@ def paused(display_width, display_height, gameDisplay):
                 quit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    print("escape")
+                    #print("escape")
                     return
         pygame.display.update()
         clock.tick(15)
@@ -160,88 +159,79 @@ def died(display_width, display_height, gameDisplay, score):
 def moveFood(food, snake, display_width, display_height ,rectSize):
     gridCountx = display_width / rectSize
     gridCounty = display_height / rectSize
-    print(gridCountx, gridCounty)
+    #print(gridCountx, gridCounty)
     while True: #
-        print("przed kolejnym przesunięciem: ", food)
         randomShiftx = 0
         randomShifty = 0
-        randomShiftx = random.randint(1, gridCountx)
-        randomShifty = random.randint(1, gridCounty)
-        print(randomShiftx, randomShifty)
-        #food.move_ip(randomShiftx * rectSize, randomShifty * rectSize)
+        randomShiftx = randint(1, gridCountx)
+        randomShifty = randint(1, gridCounty)
         food.x = (randomShiftx * rectSize) - rectSize
         food.y = (randomShifty * rectSize) - rectSize
-        print("po kolejnym przesunięciu",food)
         if snake.overlapedWithSnake(food):
             continue
         else:
             return
+if __name__ == "__main__":
+    successes, failures = pygame.init()
 
-successes, failures = pygame.init()
-print("{0} successes and {1} failures".format(successes, failures))
-#Dimmension settings
-rectSize = 32
-windowSizex = rectSize*20
-windowSizey = rectSize*10
-screen = pygame.display.set_mode((windowSizex, windowSizey))
-clock = pygame.time.Clock()
-FPS = 3  # Frames per second at start.
+    #Dimmension settings
+    rectSize = 32   #Size of grid
+    windowSizex = rectSize*20   #width of game window
+    windowSizey = rectSize*10   #height of game window
+    screen = pygame.display.set_mode((windowSizex, windowSizey))
+    clock = pygame.time.Clock()
+    FPS = 3  # Frames per second at start.
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
+    GREEN = (0, 255, 0)
+    rect = pygame.Rect((0, 0), (rectSize, rectSize))
+    food = pygame.Rect((rectSize*3, rectSize*4), (rectSize, rectSize ))
+    image = pygame.Surface((rectSize, rectSize))
+    image.fill(WHITE)
+    image2 = pygame.Surface((rectSize, rectSize))
+    image2.fill(GREEN)
+    mainWindowTitle = "Snake PG"
+    pygame.display.set_caption(mainWindowTitle)
+    buttonPressed = "d"
+    pygame.font.init()
+    snake = Snake(dir, rect, rectSize, windowSizex, windowSizey)
+    killed = ""
+    score = 0
 
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-# RED = (255, 0, 0), GREEN = (0, 255, 0), BLUE = (0, 0, 255).
-GREEN = (0, 255, 0)
+    while True:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    buttonPressed = "w"
+                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                    buttonPressed = "s"
+                elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    buttonPressed = "a"
+                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                    buttonPressed = "d"
+                elif event.key == pygame.K_ESCAPE:
+                    pause = True
+                    paused(windowSizex, windowSizey, screen)
 
-rect = pygame.Rect((0, 0), (rectSize, rectSize))
-food = pygame.Rect((rectSize*3, rectSize*4), (rectSize, rectSize ))
-image = pygame.Surface((rectSize, rectSize))
-image.fill(WHITE)
-image2 = pygame.Surface((rectSize, rectSize))
-image2.fill(GREEN)
-mainWindowTitle = "Snake PG"
-pygame.display.set_caption(mainWindowTitle)
-getTicksLastFrame = 0
-buttonPressed = "d"
-pygame.font.init()
-myfont = pygame.font.SysFont('consolas', 100)
-snake = Snake(dir, rect, rectSize, windowSizex, windowSizey)
-killed = ""
-score = 0
+        killed = snake.moveSnakeBody(buttonPressed)
+        if killed == "Killed":
+            respawn = died(windowSizex, windowSizey, screen,score)
+            pygame.display.set_caption(mainWindowTitle + " | SCORE: "+ "0")
+            if respawn:
+                snake = Snake("d", rect, rectSize, windowSizex, windowSizey)
+                score = 0
+                FPS = 3
+        if snake.checkCollideFood(food):
+            score += 1
+            pygame.display.set_caption(mainWindowTitle + " | SCORE: "+ str(score))
+            moveFood(food, snake, windowSizex, windowSizey ,rectSize)
+            if score % 6 == 0:
+                FPS += 1
 
-while True:
-    clock.tick(FPS)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            quit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w or event.key == pygame.K_UP:
-                buttonPressed = "w"
-            elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                buttonPressed = "s"
-            elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                buttonPressed = "a"
-            elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                buttonPressed = "d"
-            elif event.key == pygame.K_ESCAPE:
-                pause = True
-                paused(windowSizex, windowSizey, screen)
-
-    killed = snake.moveSnakeBody(buttonPressed)
-    if killed == "Killed":
-        respawn = died(windowSizex, windowSizey, screen,score)
-        pygame.display.set_caption(mainWindowTitle + " | SCORE: "+ "0")
-        if respawn:
-            snake = Snake("d", rect, rectSize, windowSizex, windowSizey)
-            score = 0
-            FPS = 3
-    if snake.checkCollideFood(food):
-        score += 1
-        pygame.display.set_caption(mainWindowTitle + " | SCORE: "+ str(score))
-        moveFood(food, snake, windowSizex, windowSizey ,rectSize)
-        if score % 6 == 0:
-            FPS += 1
-
-    screen.fill(BLACK)
-    snake.drawSnake(screen, image)
-    screen.blit(image2, food)
-    pygame.display.update()
+        screen.fill(BLACK)
+        snake.drawSnake(screen, image)
+        screen.blit(image2, food)
+        pygame.display.update()

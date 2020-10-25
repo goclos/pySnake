@@ -4,8 +4,8 @@
 /Include/*
 /Lib/*
 /Scripts/*
-/Snake/*
-/output/
-/_pycache__/
+/SnakeEnv/*
+/output/*
+/__pycache__/*
 TODO.txt
 pyvenv.cfg

@@ -1,5 +1,7 @@
 import pygame
+import sys
 from random import randint
+
 
 class Snake:
     def __init__(self, dir, headRect, rectSize, windowSizex, windowSizey):
@@ -115,7 +117,8 @@ def paused(display_width, display_height, gameDisplay):
     while pause:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                quit()
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     #print("escape")
@@ -133,7 +136,7 @@ def died(display_width, display_height, gameDisplay, score):
     scoreTextSurf, scoreTextRect = text_objects("Your SCORE: "+ str(score), smalltext, (51,255,0))
     scoreTextRect.center = ((display_width/2),(display_height/2))
 
-    escTextSurf, escTextRect = text_objects("Press 'ESC' to quite", smalltext, (51,255,0))
+    escTextSurf, escTextRect = text_objects("Press 'ESC' to quit", smalltext, (51,255,0))
     escTextRect.center = ((display_width/2),(display_height/2)+40)
 
     contTextSurf, contTextRect = text_objects("Press 'ENTER' to start again", smalltext, (51,255,0))
@@ -147,10 +150,12 @@ def died(display_width, display_height, gameDisplay, score):
     while died:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                quit()
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    quit()
+                    pygame.quit()
+                    sys.exit()
                 elif event.key == pygame.K_RETURN:
                     return True
         pygame.display.update()
@@ -202,7 +207,8 @@ if __name__ == "__main__":
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                quit()
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w or event.key == pygame.K_UP:
                     buttonPressed = "w"
